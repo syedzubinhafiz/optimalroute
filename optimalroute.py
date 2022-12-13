@@ -2,12 +2,9 @@ from cmath import inf
 import heapq
 """
 Name: Syed Zubin Hafiz
-Student ID: 32227671
 Version: 1.3
 
 """
-
-
 """Question 1"""
 class Vertex:
     def __init__(self, name):
