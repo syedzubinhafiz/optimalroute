@@ -129,80 +129,7 @@ class RoadGraph:
         # Return
         return path
  
-#--------------------------------------------------------------------------# 
-
-"""Question 2 """   
-class SkiGraph(Graph):
-    def __init__(self,downhillScores):
-        maxIndex = 0
-        for i in range(len(downhillScores)):
-            maxIndex = max(downhillScores[i][0],downhillScores[i][1],maxIndex)
-        super().__init__(downhillScores,maxIndex+1) 
-
-    def routingAux(self,start,finish,scoreList,previous_node_list):
-        """Time Complexity: O(V+E)
-           Space Complexity: O(V) """
-        # If the vertice has already been processed, then return
-        if(scoreList[start]!=-float("inf")):
-            return scoreList[start], True
-        # If the finish point has been reached, return
-        if(start==finish):
-            scoreList[start] = 0
-            return scoreList[start], True
-        else:
-            # Check if the finish point has been reached in a child node
-            endPointReached = False 
-            # Go through each neighbour
-            for edge in self.vertices[start].edges:
-                # Try to find the finish point within the children of the neighbour
-                adjScore, adjEndPointReached = self.routingAux(edge.v.name,finish,scoreList,previous_node_list)
-                adjScore += edge.w
-                # Was the finish point reached within this path? If so, is the route to the finish point using this edge faster than previous?
-                if(adjEndPointReached and adjScore>=scoreList[start]):
-                    # Then the end point has been reached through here, set to true
-                    endPointReached = True
-                    # Update variables accordingly
-                    previous_node_list[start] = edge.v.name
-                    scoreList[start] = adjScore
-            # Return
-            return scoreList[start], endPointReached
-
-    def routing(self,start,finish):
-        """Time Complexity: O(V+E)
-           Space Complexity: O(V) """
-        # Define scores (absolute minimum)
-        scoreList = [-float("inf")] * len(self.vertices)
-        # Define starting score as nonexistent
-        scoreList[start] == None 
-        # Define list of last vertices
-        previous_node_list = [None] * len(self.vertices)
-        # Recurse through vertices
-        maxScore, endPointReached = self.routingAux(start,finish,scoreList,previous_node_list)
-        return scoreList, previous_node_list
-
-def optimalRoute(downhillScores,start,finish):
-    """Finds the best downhill route with the best score possible
-       Time Complexity: O(|D|), where |D| is the number of downhill segments."""
-    # Define graph
-    g = SkiGraph(downhillScores)
-    # Get the scores and the previous vertices
-    scoreList, previous_node_list = g.routing(start,finish)
-    # Find path from the start to the end
-    path = []
-    pos = start 
-    # Keep looping until finish is reached (or there is a dead end)
-    while(pos!=finish and pos!=None):
-        path.append(pos)
-        pos = previous_node_list[pos]
-    # If there is a dead end, then return None
-    if(pos==None): 
-        return None 
-    else: 
-    # Otherwise return the path
-        path.append(pos)
-        return path
-    
-    
+#--------------------------------------------------------------------------#     
 """TEST CASES""" 
 if __name__ == '__main__':
 # Question 1
@@ -219,10 +146,3 @@ if __name__ == '__main__':
     rg = RoadGraph(roads,cafes)
     print(rg.routing(3,4))
     print(rg)
-#Question 2
-    downhillScores = [(0, 6, -500), (1, 4, 100), (1, 2, 300),
-            (6, 3, -100), (6, 1, 200), (3, 4, 400), (3, 1, 400),
-            (5, 6, 700), (5, 1, 1000), (4, 2, 100)]
-    start = 6 
-    finish = 2 
-    print(optimalRoute(downhillScores,start,finish))
